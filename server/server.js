@@ -6,7 +6,7 @@ const app = express();
 const port = process.env.PORT || 3000;
 const publicPath = path.join(__dirname, '../public');
 
-const { generateMessage } = require('./utils/message')
+const { generateMessage, generateLocationMessage } = require('./utils/message')
 
 app.use(express.static(publicPath));
 
@@ -52,6 +52,10 @@ io.on('connection', (socket) => {
         // })
 
     });
+
+    socket.on('currentLocationMessage', (latLongParam)=>{
+        io.emit('newLocationMessage', generateLocationMessage('Admin', latLongParam.latitude, latLongParam.longitude))
+    })
 
     // socket.emit('newMessage', {
     //     from: 'nitin.singh@exaple.com',

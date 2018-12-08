@@ -51,3 +51,34 @@ socket.on('newMessage', function (newMsg) {
 
     jQuery('#messages').append(li);
 });
+
+// send location
+
+const locationButton = jQuery('#send-location');
+locationButton.on('click', function(){
+    console.log('sending lcoation...');
+    if(!navigator.geolocation){
+        return alert('GeoLocation not supported by your browser');
+    }
+
+    navigator.geolocation.getCurrentPosition(function (position){
+        socket.emit('currentLocationMessage', {
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude
+        });
+    }, function(){
+        alert('Unable to fetch location');
+    });
+
+});
+
+socket.on('newLocationMessage', function(newLocMsg){
+    console.log(`from: ${newLocMsg.from} and url: ${newLocMsg.url}`)
+    var li = jQuery('<li></li>');
+    var a = jQuery('<a target="_blank">My Current Location</a>');
+    li.text(`${newLocMsg.from}: `);
+    a.attr('href', newLocMsg.url)
+    li.append(a);
+    jQuery('#messages').append(li);
+
+});
