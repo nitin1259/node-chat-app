@@ -22,15 +22,25 @@ io.on('connection', (socket) => {
         console.log('Disconnect from client');
     });
 
-    socket.emit('newEmail', {
-        from: 'nitin.singh@ca.com',
-        subject: 'Something has to be done...',
-        body: 'This is the part which has to go something in the body tag.'
+    // socket.emit('newEmail', {
+    //     from: 'nitin.singh@ca.com',
+    //     subject: 'Something has to be done...',
+    //     body: 'This is the part which has to go something in the body tag.'
+    // });
+
+    // socket.on('createMail', (newMail) => {
+    //     console.log('New Mail : ', newMail);
+    // })
+
+    socket.on('createMessage', (msg)=>{
+        console.log('New msg has been created, details: ', msg);
     });
 
-    socket.on('createMail', (newMail) => {
-        console.log('New Mail : ', newMail);
-    })
+    socket.emit('newMessage', {
+        from: 'nitin.singh@exaple.com',
+        text: 'New message has been emitted from the server for chat app',
+        createAt: 12345
+    });
 })
 
 
