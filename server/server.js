@@ -15,17 +15,27 @@ const server = http.createServer(app);
 
 const io = socketIO(server);
 
-io.on('connection', (socket)=>{
+io.on('connection', (socket) => {
     console.log('New user connected');
 
-    socket.on('disconnect', ()=>{
+    socket.on('disconnect', () => {
         console.log('Disconnect from client');
+    });
+
+    socket.emit('newEmail', {
+        from: 'nitin.singh@ca.com',
+        subject: 'Something has to be done...',
+        body: 'This is the part which has to go something in the body tag.'
+    });
+
+    socket.on('createMail', (newMail) => {
+        console.log('New Mail : ', newMail);
     })
 })
 
 
 
-server.listen(port, ()=>{
+server.listen(port, () => {
     console.log('chat app server starting on port', port);
 })
 
