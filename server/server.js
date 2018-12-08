@@ -34,20 +34,25 @@ io.on('connection', (socket) => {
 
     socket.on('createMessage', (msg)=>{
         console.log('New msg has been created, details: ', msg);
+        io.emit('newMessage', {
+            from: msg.from,
+            text: msg.text,
+            createAt: new Date().getTime()
+        });
     });
 
-    socket.emit('newMessage', {
-        from: 'nitin.singh@exaple.com',
-        text: 'New message has been emitted from the server for chat app',
-        createAt: 12345
-    });
-})
+    // socket.emit('newMessage', {
+    //     from: 'nitin.singh@exaple.com',
+    //     text: 'New message has been emitted from the server for chat app',
+    //     createAt: 12345
+    // });
+});
 
 
 
 server.listen(port, () => {
     console.log('chat app server starting on port', port);
-})
+});
 
 
 
