@@ -6,6 +6,8 @@ const app = express();
 const port = process.env.PORT || 3000;
 const publicPath = path.join(__dirname, '../public');
 
+const { generateMessage } = require('./utils/message')
+
 app.use(express.static(publicPath));
 
 // app.get('/', (req,res)=>{
@@ -32,25 +34,13 @@ io.on('connection', (socket) => {
     //     console.log('New Mail : ', newMail);
     // })
 
-    socket.emit('newMessage', {
-        from: 'Admin',
-        text: "Welcom to chat app",
-        createAt: new Date().getTime()
-    });
+    socket.emit('newMessage', generateMessage('Admin', 'Welcome to chat app'));
 
-    socket.broadcast.emit('newMessage', {
-        from: 'Admin',
-        text: 'New user joined',
-        createAt: new Date().getTime()
-    });
+    socket.broadcast.emit('newMessage', generateMessage('Admin', 'New user joined'));
 
     socket.on('createMessage', (msg) => {
         console.log('New msg has been created, details: ', msg);
-        io.emit('newMessage', {
-            from: msg.from,
-            text: msg.text,
-            createAt: new Date().getTime()
-        });
+        io.emit('newMessage', generateMessage(msg.from, msg.text));
 
         // Broadcasting is the term for a emitting event to everybody but one specific user.
         // socket.broadcast.emit('newMessage', {
