@@ -32,13 +32,33 @@ io.on('connection', (socket) => {
     //     console.log('New Mail : ', newMail);
     // })
 
-    socket.on('createMessage', (msg)=>{
+    socket.emit('newMessage', {
+        from: 'Admin',
+        text: "Welcom to chat app",
+        createAt: new Date().getTime()
+    });
+
+    socket.broadcast.emit('newMessage', {
+        from: 'Admin',
+        text: 'New user joined',
+        createAt: new Date().getTime()
+    });
+
+    socket.on('createMessage', (msg) => {
         console.log('New msg has been created, details: ', msg);
         io.emit('newMessage', {
             from: msg.from,
             text: msg.text,
             createAt: new Date().getTime()
         });
+
+        // Broadcasting is the term for a emitting event to everybody but one specific user.
+        // socket.broadcast.emit('newMessage', {
+        //     from: msg.from,
+        //     text: msg.text,
+        //     createAt: new Date().getTime()
+        // })
+
     });
 
     // socket.emit('newMessage', {
