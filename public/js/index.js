@@ -42,13 +42,14 @@ jQuery('#message-form').on('submit', function (e) {
         console.log('Acknowledgement', message);
         msgTextBox.val(""); // clearing the thing after acknowledgement 
     });
-    
+
 });
 
 socket.on('newMessage', function (newMsg) {
     console.log('New Message: ', newMsg);
+    const timeStamp = moment(newMsg.createdAt).format('h:mm a');
     var li = jQuery('<li></li>');
-    li.text(`${newMsg.from} : ${newMsg.text}`);
+    li.text(`${newMsg.from} ${timeStamp}: ${newMsg.text}`);
 
     jQuery('#messages').append(li);
 });
@@ -56,30 +57,31 @@ socket.on('newMessage', function (newMsg) {
 // send location
 
 const locationButton = jQuery('#send-location');
-locationButton.on('click', function(){
+locationButton.on('click', function () {
     console.log('sending lcoation...');
-    if(!navigator.geolocation){
+    if (!navigator.geolocation) {
         return alert('GeoLocation not supported by your browser');
     }
     locationButton.attr('disabled', 'disabled').text('Sending Location ...');
-    navigator.geolocation.getCurrentPosition(function (position){
+    navigator.geolocation.getCurrentPosition(function (position) {
         locationButton.removeAttr('disabled').text('Send Location');
         socket.emit('currentLocationMessage', {
             latitude: position.coords.latitude,
             longitude: position.coords.longitude
         });
-    }, function(){
+    }, function () {
         locationButton.removeAttr('disabled').text('Send Location');
         alert('Unable to fetch location');
     });
 
 });
 
-socket.on('newLocationMessage', function(newLocMsg){
+socket.on('newLocationMessage', function (newLocMsg) {
     console.log(`from: ${newLocMsg.from} and url: ${newLocMsg.url}`)
+    const timeStamp = moment(newLocMsg.createdAt).format('h:mm a');
     var li = jQuery('<li></li>');
     var a = jQuery('<a target="_blank">My Current Location</a>');
-    li.text(`${newLocMsg.from}: `);
+    li.text(`${newLocMsg.from} ${timeStamp}: `);
     a.attr('href', newLocMsg.url)
     li.append(a);
     jQuery('#messages').append(li);
