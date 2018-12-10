@@ -39,13 +39,21 @@ io.on('connection', (socket) => {
         if (!isRealString(param.name || !isRealString(param.room))) {
             cb('Name and Room name are required !');
         }
+        socket.join(param.room);
+        // socket.leave('Developer');
+
+        // io.emit -> io.to('room name').emit
+        // socket.broadcast.emit -> socket.broadcast.to('room name').emit
+        // socket.emit
+        socket.emit('newMessage', generateMessage('Admin', 'Welcome to chat app'));
+        socket.broadcast.to(param.room).emit('newMessage', generateMessage('Admin', 'New user joined'));
 
         cb();
     })
 
-    socket.emit('newMessage', generateMessage('Admin', 'Welcome to chat app'));
+    // socket.emit('newMessage', generateMessage('Admin', 'Welcome to chat app'));
 
-    socket.broadcast.emit('newMessage', generateMessage('Admin', 'New user joined'));
+    // socket.broadcast.emit('newMessage', generateMessage('Admin', 'New user joined'));
 
     socket.on('createMessage', (msg, callback) => {
         console.log('New msg has been created, details: ', msg);
