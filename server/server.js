@@ -8,6 +8,7 @@ const publicPath = path.join(__dirname, '../public');
 
 const { generateMessage, generateLocationMessage } = require('./utils/message');
 const { isRealString } = require('./validation/validation');
+const { Users } = require('./utils/users');
 
 app.use(express.static(publicPath));
 
@@ -17,12 +18,17 @@ app.use(express.static(publicPath));
 const server = http.createServer(app);
 
 const io = socketIO(server);
+const users = new Users();
 
 io.on('connection', (socket) => {
     console.log('New user connected');
 
     socket.on('disconnect', () => {
         console.log('Disconnect from client');
+        const user = users.removeUser(socket.id);
+
+        io.to(user.room).emit('updateUserList', users.getUserList(user.room));
+        io.to(user.room).emit('newMessage', generateMessage('Admin', `${user.name} has left.`));
     });
 
     // socket.emit('newEmail', {
@@ -37,9 +43,13 @@ io.on('connection', (socket) => {
 
     socket.on('join', (param, cb) => {
         if (!isRealString(param.name || !isRealString(param.room))) {
-            cb('Name and Room name are required !');
+            return cb('Name and Room name are required !');
         }
         socket.join(param.room);
+        users.removeUser(socket.id);
+        users.addUser(socket.id, param.name, param.room);
+
+        io.to(param.room).emit('updateUserList', users.getUserList(param.room));
         // socket.leave('Developer');
 
         // io.emit -> io.to('room name').emit
