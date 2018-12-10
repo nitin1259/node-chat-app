@@ -72,7 +72,7 @@ jQuery('#message-form').on('submit', function (e) {
     var msgTextBox = jQuery('[name=message-input]');
 
     socket.emit('createMessage', {
-        from: 'Some User',
+        // from: 'Some User',
         text: msgTextBox.val(),
     }, function callback(message) {
         console.log('Acknowledgement', message);

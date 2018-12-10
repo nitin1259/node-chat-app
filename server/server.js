@@ -66,8 +66,12 @@ io.on('connection', (socket) => {
     // socket.broadcast.emit('newMessage', generateMessage('Admin', 'New user joined'));
 
     socket.on('createMessage', (msg, callback) => {
-        console.log('New msg has been created, details: ', msg);
-        io.emit('newMessage', generateMessage(msg.from, msg.text));
+        // console.log('New msg has been created, details: ', msg);
+        const user = users.getUser(socket.id);
+
+        if(user && isRealString(message.text)){
+            io.to(user.room).emit('newMessage', generateMessage(user.name, msg.text));
+        }
         callback({
             message: 'This msg is from server.'
         });
@@ -81,7 +85,11 @@ io.on('connection', (socket) => {
     });
 
     socket.on('currentLocationMessage', (latLongParam) => {
-        io.emit('newLocationMessage', generateLocationMessage('Admin', latLongParam.latitude, latLongParam.longitude))
+        const user = users.getUser(socket.id);
+
+        if(user && isRealString(message.text)){
+            io.to(user.room).emit('newLocationMessage', generateLocationMessage(user.name, latLongParam.latitude, latLongParam.longitude))
+        }
     })
 
     // socket.emit('newMessage', {
