@@ -69,7 +69,7 @@ io.on('connection', (socket) => {
         // console.log('New msg has been created, details: ', msg);
         const user = users.getUser(socket.id);
 
-        if(user && isRealString(message.text)){
+        if(user && isRealString(msg.text)){
             io.to(user.room).emit('newMessage', generateMessage(user.name, msg.text));
         }
         callback({
@@ -87,7 +87,7 @@ io.on('connection', (socket) => {
     socket.on('currentLocationMessage', (latLongParam) => {
         const user = users.getUser(socket.id);
 
-        if(user && isRealString(message.text)){
+        if(user && isRealString(latLongParam.latitude) && isRealString(latLongParam.latitude)){
             io.to(user.room).emit('newLocationMessage', generateLocationMessage(user.name, latLongParam.latitude, latLongParam.longitude))
         }
     })
